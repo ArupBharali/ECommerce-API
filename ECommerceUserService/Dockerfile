@@ -16,7 +16,7 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 
 # Expose the port the app runs on
-EXPOSE 80
+EXPOSE 5269
 
 # Define the entry point for the container
 ENTRYPOINT ["dotnet", "ECommerceUserAPI.dll"]

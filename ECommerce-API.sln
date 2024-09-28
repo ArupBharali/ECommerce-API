@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceProductAPI", "ECommerceProductAPI.csproj", "{8614DD46-22F1-48B1-A157-A78C3D461E28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceProductAPI", ".\ECommerceProductService\ECommerceProductAPI.csproj", "{8614DD46-22F1-48B1-A157-A78C3D461E28}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceUserAPI", "..\ECommerceUserService\ECommerceUserAPI.csproj", "{9CAF9C5A-8C11-413F-A7FB-640617C74AF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ECommerceUserAPI", ".\ECommerceUserService\ECommerceUserAPI.csproj", "{9CAF9C5A-8C11-413F-A7FB-640617C74AF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,3 +6,7 @@
 /.vs/ECommerceProductAPI
 /ECommerceUserService/bin/Debug/net8.0
 /ECommerceUserService/obj
+/ECommerceProductService/bin/Release/net6.0
+/ECommerceUserService/bin/Release/net8.0
+/.vs
+/out
