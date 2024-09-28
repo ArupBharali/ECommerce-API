@@ -1,0 +1,11 @@
+Switching environments:
+A.Backend
+	1.appsettings.json
+		change the key IsDocker: true/false
+	2.docker-compose.yml
+		["Redis":"Configuration"]="localhost:6379"/"redis:6379"
+B.Frontend
+	1.in all services
+		switch the port numbers: change the 5 to 7 for local and 7 to 5 for docker
+
+C.Confirm Docker Redis is running

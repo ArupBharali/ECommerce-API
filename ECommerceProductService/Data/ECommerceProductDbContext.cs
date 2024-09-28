@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ECommerceAPI.Models;
+using ECommerceAPI.ECommerceProductService.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace ECommerceAPI.Data
+namespace ECommerceAPI.ECommerceProductService.Data
 {
-    public class ECommerceDbContext : IdentityDbContext<ApplicationUser>
+    public class ECommerceProductDbContext : DbContext
     {
-        public ECommerceDbContext(DbContextOptions<ECommerceDbContext> options) : base(options) { }
+        public ECommerceProductDbContext(DbContextOptions<ECommerceProductDbContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }

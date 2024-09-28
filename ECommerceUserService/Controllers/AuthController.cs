@@ -1,5 +1,6 @@
 ﻿using ECommerceAPI.ECommerceUserAPI.Models;
 using ECommerceAPI.ECommerceUserAPI.Services;
+using ECommerceUserAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,13 +19,15 @@ public class AuthController : ControllerBase
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly TokenService _tokenService;
     private readonly IConfiguration _configuration;
+    private readonly TokenBlacklistService _tokenBlacklistService;
 
-    public AuthController(IConfiguration configuration, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService)
+    public AuthController(IConfiguration configuration, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, TokenBlacklistService tokenBlacklistService)
     {
         _configuration = configuration;
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
+        _tokenBlacklistService = tokenBlacklistService;
     }
  
     [AllowAnonymous]
@@ -118,5 +121,15 @@ public class AuthController : ControllerBase
             // Log the exception (ex.Message) for troubleshooting
             throw;
         }
+    }
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        // Access the JTI claim
+        var jti = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+
+        await _tokenBlacklistService.LogoutAsync(jti);
+        return Ok(new { message = "Logged out successfully." });
     }
 }

@@ -1,18 +1,18 @@
-﻿using ECommerceAPI.Data;
-using ECommerceAPI.Models;
+﻿using ECommerceAPI.ECommerceProductService.Data;
+using ECommerceAPI.ECommerceProductService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerceAPI.Controllers
+namespace ECommerceAPI.ECommerceProductService.Controllers
 {
     // Controllers/CartController.cs
     [ApiController]
     [Route("api/cart")]
     public class CartController : ControllerBase
     {
-        private readonly ECommerceDbContext _context;
+        private readonly ECommerceProductDbContext _context;
 
-        public CartController(ECommerceDbContext context)
+        public CartController(ECommerceProductDbContext context)
         {
             _context = context;
         }

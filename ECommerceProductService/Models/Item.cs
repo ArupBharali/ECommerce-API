@@ -1,4 +1,4 @@
-﻿namespace ECommerceAPI.Models
+﻿namespace ECommerceAPI.ECommerceProductService.Models
 {
     public class Item
     {

@@ -1,4 +1,4 @@
-﻿namespace ECommerceAPI.Models
+﻿namespace ECommerceAPI.ECommerceProductService.Models
 {
     // Models/Cart.cs
     public class Cart

@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ECommerceAPI.Data;
-using ECommerceAPI.Models;
+using ECommerceAPI.ECommerceProductService.Data;
+using ECommerceAPI.ECommerceProductService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
-namespace ECommerceAPI.Controllers
+namespace ECommerceAPI.ECommerceProductService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
     public class ProductController : ControllerBase
     {
-        private readonly ECommerceDbContext _context;
+        private readonly ECommerceProductDbContext _context;
 
-        public ProductController(ECommerceDbContext context)
+        public ProductController(ECommerceProductDbContext context)
         {
             _context = context;
         }

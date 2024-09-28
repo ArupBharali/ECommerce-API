@@ -2,19 +2,19 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Threading.Tasks;
-using ECommerceAPI.Data;
+using ECommerceAPI.ECommerceProductService.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerceAPI.Controllers
+namespace ECommerceAPI.ECommerceProductService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize] // Ensure that the user is authenticated
     public class OrdersController : ControllerBase
     {
-        private readonly ECommerceDbContext _context;
+        private readonly ECommerceProductDbContext _context;
 
-        public OrdersController(ECommerceDbContext context)
+        public OrdersController(ECommerceProductDbContext context)
         {
             _context = context;
         }

@@ -10,3 +10,5 @@
 /ECommerceUserService/bin/Release/net8.0
 /.vs
 /out
+/ECommerceProductService/logs
+/ECommerceUserService/logs

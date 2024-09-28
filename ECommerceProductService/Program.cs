@@ -1,23 +1,46 @@
-using ECommerceAPI.Data;
-using ECommerceAPI.Models;
-using ECommerceAPI.Services;
+using ECommerceAPI.ECommerceProductService.Data;
+using ECommerceAPI.ECommerceProductService.Models;
+using ECommerceProductAPI.Middlewares;
+using ECommerceProductAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var isDocker = false;
-var env = builder.Configuration["IsDocker"];
-if (env != null && env.Equals("true"))
+// Determine if running in Docker
+var isDocker = builder.Configuration["IsDocker"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+
+// Configure Serilog directly in Program.cs
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information() // Set the minimum log level
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}") // Console logging
+    .WriteTo.File("logs/ECommerceProductAPILog.log", rollingInterval: RollingInterval.Day) // File logging
+    .WriteTo.MSSqlServer(
+        connectionString: isDocker? "Server=host.docker.internal;Database=ECommerceProductDB;User Id=sa;Password=interOP@123;TrustServerCertificate=True" : "Server=localhost;Database=ECommerceProductDB;User Id=sa;Password=interOP@123;TrustServerCertificate=True",
+        tableName: "SeriLogs",
+        autoCreateSqlTable: true) // Database logging
+    .CreateLogger(); // Create the logger
+
+// Configure Redis Cache
+builder.Services.AddStackExchangeRedisCache(options =>
 {
-    isDocker = true;
-}
+    options.Configuration = builder.Configuration["Redis:Configuration"]; // Your Redis server configuration
+    options.InstanceName = builder.Configuration["Redis:InstanceName"]; // Optional prefix for cache keys
+});
+
+// Use Serilog with configuration from appsettings.json
+builder.Host.UseSerilog(); // This will read from appsettings.json
 
 // Add services to the container.
-builder.Services.AddDbContext<ECommerceDbContext>(options =>
+builder.Services.AddDbContext<ECommerceProductDbContext>(options =>
     options.UseSqlServer(isDocker ? builder.Configuration.GetConnectionString("DefaultConnectionDocker") : builder.Configuration.GetConnectionString("DefaultConnectionLocal")));
 
 builder.Services.AddCors(options =>
@@ -28,14 +51,9 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
-builder.Services.AddTransient<TokenService>();
-
 builder.Services.AddControllers();
-
-// Configure Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<ECommerceDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddHttpClient(); // Register HttpClientFactory();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add authentication services
 builder.Services.AddAuthentication(options =>
@@ -43,8 +61,10 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(options =>
+    .AddJwtBearer(
+    options =>
     {
+        options.Events = new ECommerceProductAPI.CustomJwtBearerEvents(builder.Services.BuildServiceProvider().GetRequiredService<IDistributedCache>());
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -55,7 +75,8 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
-    });
+    }
+    );
 
 // Add authorization services
 builder.Services.AddAuthorization();
@@ -66,16 +87,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+/* this is not needed as the token validation is done from the Jwt events */
+//app.UseMiddleware<TokenValidationMiddleware>(); // Register the custom middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>(); // Add your custom middleware here
+
 // Seed the database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ECommerceDbContext>();
+    var context = services.GetRequiredService<ECommerceProductDbContext>();
     DbInitializer.InitializeProducts(context);
-    await DbInitializer.InitializeUsers(context, services);
 }
 
-app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -91,7 +114,11 @@ else
 
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
 app.UseRouting();
+app.UseCors("AllowAllOrigins");
+
 
 app.UseAuthentication(); // Add this
 app.UseAuthorization();  // Add this
