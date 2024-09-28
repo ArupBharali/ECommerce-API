@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  ecommerceproductapi:
+    build:
+      context: ./ECommerceProductService
+      dockerfile: Dockerfile
+    ports:
+      - "5268:5268" # Adjust port mappings as needed
+
+  ecommerceuserapi:
+    build:
+      context: ./ECommerceUserService
+      dockerfile: Dockerfile
+    ports:
+      - "5269:5269" # Adjust port mappings as needed
