@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs/ECommerce-API/v17
+/.vs/ECommerceProductAPI
+/ECommerceUserService/bin/Debug/net8.0
+/ECommerceUserService/obj

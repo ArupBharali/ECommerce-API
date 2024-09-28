@@ -10,9 +10,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var isDocker = false;
+var env = builder.Configuration["IsDocker"];
+if (env != null && env.Equals("true"))
+{
+    isDocker = true;
+}
+
 // Add services to the container.
 builder.Services.AddDbContext<ECommerceUserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(isDocker ? builder.Configuration.GetConnectionString("DefaultConnectionDocker") : builder.Configuration.GetConnectionString("DefaultConnectionLocal")));
 
 builder.Services.AddCors(options =>
 {
@@ -30,7 +37,6 @@ builder.Services.AddControllers();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ECommerceUserDbContext>()
     .AddDefaultTokenProviders();
-
 
 // Add authentication services
 builder.Services.AddAuthentication(options =>
@@ -98,6 +104,13 @@ app.UseEndpoints(endpoints =>
 app.MapControllers();
 
 // Set Kestrel to listen on port 7208
-app.Urls.Add("http://*:5269");
+if (isDocker)
+{
+    app.Urls.Add("http://*:5269");
+}
+else
+{
+    app.Urls.Add("http://*:7269");
+}
 
 app.Run();
