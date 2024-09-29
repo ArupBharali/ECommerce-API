@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -125,6 +126,7 @@ app.UseAuthorization();  // Add this
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapMetrics();
     endpoints.MapControllers();
 });
 

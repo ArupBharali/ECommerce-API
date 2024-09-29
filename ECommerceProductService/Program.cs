@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Prometheus;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -125,6 +126,7 @@ app.UseAuthorization();  // Add this
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapMetrics();
     endpoints.MapControllers();
 });
 

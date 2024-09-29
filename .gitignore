@@ -2,13 +2,13 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/ECommerce-API/v17
-/.vs/ECommerceProductAPI
-/ECommerceUserService/bin/Debug/net8.0
-/ECommerceUserService/obj
-/ECommerceProductService/bin/Release/net6.0
-/ECommerceUserService/bin/Release/net8.0
 /.vs
-/out
+/ECommerceApiGateway/bin/Debug/net8.0
+/ECommerceApiGateway/logs
+/ECommerceProductService/bin/Release/net6.0
 /ECommerceProductService/logs
+/ECommerceUserService/bin
 /ECommerceUserService/logs
+/ECommerceUserService/obj
+/out/runtimes
+/ECommerceApiGateway/obj
